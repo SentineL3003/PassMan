@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" style="-fx-background-color: #313b63;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.passman.LoginController">
+    <children>
+        <!-- Заголовок -->
+        <Label alignment="CENTER" prefHeight="85.0" prefWidth="500.0" style="-fx-background-color: #2E3348;" text="PassMan" textFill="WHITE">
+            <font>
+                <Font name="Cascadia Mono Regular" size="36.0" />
+            </font>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </Label>
+
+        <!-- Контейнер для формы ввода (центрирует содержимое) -->
+        <VBox alignment="CENTER" prefWidth="500.0" spacing="15.0">
+            <VBox.margin>
+                <Insets top="60.0" />
+            </VBox.margin>
+            <children>
+                <Label text="Введите мастер-пароль" textFill="WHITE">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="18.0" />
+                    </font>
+                </Label>
+
+                <PasswordField fx:id="passwordField" maxWidth="250.0" prefHeight="35.0" style="-fx-background-color: #4d5782; -fx-text-fill: #ffffff;">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </PasswordField>
+
+                <Label fx:id="messageLabel" alignment="CENTER" prefHeight="21.0" prefWidth="300.0" textFill="#ee3e3e">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </Label>
+
+                <Button fx:id="unlockButton" disable="true" mnemonicParsing="false" onAction="#unblock" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: #4d5782; -fx-cursor: hand;" text="Разблокировать" textFill="WHITE">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </Button>
+            </children>
+        </VBox>
+
+        <!-- Этот элемент заберет всё свободное место, прижав всё что ниже к самому низу -->
+        <Region VBox.vgrow="ALWAYS" />
+
+        <!-- Нижняя панель для кнопки Выход -->
+        <HBox alignment="BOTTOM_LEFT" prefHeight="50.0">
+            <children>
+                <Button fx:id="exitButton" cancelButton="true" mnemonicParsing="false" onAction="#exit" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #4d5782; -fx-cursor: hand;" text="Выход" textFill="WHITE">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>

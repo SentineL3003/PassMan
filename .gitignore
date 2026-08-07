@@ -1,0 +1,8 @@
+target/
+*.class
+
+.idea/
+*.iml
+
+passwords.json
+master.json
