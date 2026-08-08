@@ -2,6 +2,7 @@ package com.example.passman;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 public class MasterPasswordManager {
     private static final String FILE_NAME = "master.json";
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final int BCRYPT_COST = 13;
 
     private static class MasterData {
         private String masterHash;
@@ -27,7 +29,7 @@ public class MasterPasswordManager {
     }
 
     public static void saveMaster(String master) {
-        String hash = hashMaster(master);
+        String hash = BCrypt.hashpw(master, BCrypt.gensalt(BCRYPT_COST));
         MasterData data = new MasterData(hash);
 
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(FILE_NAME), StandardCharsets.UTF_8)) {
@@ -43,27 +45,10 @@ public class MasterPasswordManager {
         try (Reader reader = new InputStreamReader(new FileInputStream(FILE_NAME), StandardCharsets.UTF_8)) {
             MasterData data = gson.fromJson(reader, MasterData.class);
             if (data == null || data.masterHash == null) return false;
-            return data.masterHash.equals(hashMaster(inputMaster));
+            return BCrypt.checkpw(inputMaster, data.masterHash);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private static String hashMaster(String master) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(master.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexString =  new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1)
-                    hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 error", e);
         }
     }
 }
