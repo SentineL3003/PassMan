@@ -45,7 +45,16 @@ public class LoginController {
         }
 
         if (MasterPasswordManager.checkMaster(inputPassword)) {
-            openMainWindow();
+            try {
+                // Создаём ключ шифрования из мастер-пароля
+                CryptoPass.initKey(inputPassword);
+                openMainWindow();
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (messageLabel != null) {
+                    messageLabel.setText("Ошибка инициализации шифрования");
+                }
+            }
         } else {
             if (messageLabel != null) {
                 messageLabel.setText("Неверный мастер-пароль!");

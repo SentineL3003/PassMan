@@ -8,6 +8,7 @@ module com.example.passman {
     requires org.kordamp.bootstrapfx.core;
     requires javafx.graphics;
     requires com.google.gson;
+    requires jbcrypt;
 
     opens com.example.passman to javafx.fxml, com.google.gson;
     exports com.example.passman;

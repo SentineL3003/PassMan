@@ -17,17 +17,36 @@ public class PasswordStorageManager {
     private static class PasswordDTO {
         private String title, login, password, url;
 
-        public PasswordDTO() {
-        }
+        public PasswordDTO() {}
 
         PasswordDTO(Password password) {
             this.title = password.getTitle();
             this.login = password.getLogin();
-            this.password = password.getPassword();
             this.url = password.getUrl();
+
+            // Шифруем пароль
+            try {
+                if (CryptoPass.isReady()) {
+                    this.password = CryptoPass.encrypt(password.getPassword());
+                } else {
+                    this.password = password.getPassword(); // на всякий случай
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.password = password.getPassword();
+            }
         }
         Password toPassword() {
-            return new Password(title, login, password, url);
+            String decrypted = this.password;
+            try {
+                if (CryptoPass.isReady() && this.password != null) {
+                    decrypted = CryptoPass.decrypt(this.password);
+                }
+            } catch (Exception e) {
+                // Если не смогли расшифровать — оставляем как есть (или можно выбросить ошибку)
+                e.printStackTrace();
+            }
+            return new Password(title, login, decrypted, url);
         }
     }
 
