@@ -27,7 +27,7 @@ public class LoginController {
                 if (unlockButton != null) {
                     unlockButton.setDisable(isEmpty);
                 }
-                if (messageLabel != null) {
+                if (messageLabel != null && newValue != null && !newValue.isEmpty()) {
                     messageLabel.setText("");
                 }
             }));
