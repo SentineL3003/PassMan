@@ -9,6 +9,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -19,9 +22,15 @@ public class LoginController {
     @FXML private Button unlockButton;
     @FXML private Button exitButton;
 
+    private int attemptLeft = 3;
+    private boolean isBlocked = false;
+
     @FXML
     public void initialize() {
         if (passwordField != null) {
+
+            if (isBlocked) return;
+
             passwordField.textProperty().addListener(((observableValue, oldValue, newValue) -> {
                 boolean isEmpty = newValue == null || newValue.trim().isEmpty();
                 if (unlockButton != null) {
@@ -37,6 +46,7 @@ public class LoginController {
 
     @FXML
     protected void unblock() {
+
         if (passwordField == null) return;
 
         String inputPassword = passwordField.getText();
@@ -56,11 +66,31 @@ public class LoginController {
                 }
             }
         } else {
-            if (messageLabel != null) {
-                messageLabel.setText("Неверный мастер-пароль!");
+            attemptLeft--;
+            if (attemptLeft <= 0) {
+                blockUser();
+            } else {
+                if (messageLabel != null) {
+                    messageLabel.setText("Неверный мастер-пароль! Осталось попыток: " + attemptLeft);
+                }
             }
             passwordField.clear();
             passwordField.requestFocus();
+        }
+    }
+
+    private void blockUser() {
+        isBlocked = true;
+
+        if (unlockButton != null) {
+            unlockButton.setDisable(true);
+        }
+        if (passwordField != null) {
+            passwordField.setDisable(true);
+            passwordField.clear();
+        }
+        if (messageLabel != null) {
+            messageLabel.setText("Превышено число попыток. Доступ заблокирован!");
         }
     }
 
