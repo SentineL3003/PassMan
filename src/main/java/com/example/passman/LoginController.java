@@ -36,9 +36,6 @@ public class LoginController {
                 if (unlockButton != null) {
                     unlockButton.setDisable(isEmpty);
                 }
-                if (messageLabel != null && newValue != null && !newValue.isEmpty()) {
-                    messageLabel.setText("");
-                }
             }));
             passwordField.setOnAction(event -> unblock());
         }
@@ -68,7 +65,7 @@ public class LoginController {
         } else {
             attemptLeft--;
             if (attemptLeft <= 0) {
-                blockUser();
+                blockUser(30);
             } else {
                 if (messageLabel != null) {
                     messageLabel.setText("Неверный мастер-пароль! Осталось попыток: " + attemptLeft);
@@ -79,19 +76,29 @@ public class LoginController {
         }
     }
 
-    private void blockUser() {
+    private void blockUser(int seconds) {
         isBlocked = true;
+        unlockButton.setDisable(true);
+        passwordField.setDisable(true);
 
-        if (unlockButton != null) {
-            unlockButton.setDisable(true);
-        }
-        if (passwordField != null) {
-            passwordField.setDisable(true);
-            passwordField.clear();
-        }
-        if (messageLabel != null) {
-            messageLabel.setText("Превышено число попыток. Доступ заблокирован!");
-        }
+        final int[] timeRemaining = {seconds};
+
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(seconds);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
+            timeRemaining[0]--;
+
+            if (timeRemaining[0] > 0) {
+                messageLabel.setText("Заблокировано. Попробуйте через " + timeRemaining[0] + " сек.");
+            } else {
+                // Разблокировка
+                isBlocked = false;
+                attemptLeft = 3;
+                passwordField.setDisable(false);
+                messageLabel.setText("Попробуйте ввести пароль снова.");
+            }
+        }));
+        timeline.play();
     }
 
     private void openMainWindow() {
