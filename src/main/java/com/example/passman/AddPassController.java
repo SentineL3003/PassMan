@@ -4,6 +4,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.security.SecureRandom;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.util.Duration;
 
 public class AddPassController {
     @FXML private TextField titleField;
@@ -17,6 +23,9 @@ public class AddPassController {
 
     @FXML private Label label;
 
+    private Timeline strengthAnimation;
+    private final DoubleProperty animatedProgress = new SimpleDoubleProperty(0);
+
     private MainController mainController;
 
     public void setMainController(MainController mainController) {
@@ -25,7 +34,11 @@ public class AddPassController {
 
     @FXML
     public void initialize() {
-        // работа шкалы
+        qualityBar.progressProperty().bind(animatedProgress);
+
+        passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
+            updateQualityBar(newVal);
+        });
     }
 
     @FXML
@@ -138,8 +151,49 @@ public class AddPassController {
         }
     }
 
+    // оценка надёжности пароля
+    private double calculateStrength(String password) {
+        if (password == null || password.isEmpty()) return 0.0;
+        int score = 0;
+
+        // оценка длины
+        if (password.length() >= 8)  score++;
+        if (password.length() >= 12) score++;
+        if (password.length() >= 16) score++;
+
+        if (password.matches(".*[a-z].*")) score++;
+        if (password.matches(".*[A-Z].*")) score++;
+        if (password.matches(".*\\d.*"))   score++;
+        if (password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) score++;
+
+        return score / 7.0;
+    }
+
     private void updateQualityBar(String password) {
-        // надежность пароля
+        double target = calculateStrength(password);
+        String color;
+        if (target == 0) {
+            color = "#555555";
+        } else if (target < 0.3) {
+            color = "#e74c3c";
+        } else if (target < 0.6) {
+            color = "#e67e22";
+        } else if (target < 0.85) {
+            color = "#f1c40f";
+        } else {
+            color = "#2ecc71";
+        }
+        qualityBar.setStyle("-fx-accent: " + color + ";");
+
+        if (strengthAnimation != null) {
+            strengthAnimation.stop();
+        }
+
+        strengthAnimation = new Timeline(
+                new KeyFrame(Duration.millis(250),
+                        new KeyValue(animatedProgress, target))
+        );
+        strengthAnimation.play();
     }
 
     private void showError(String message) {
