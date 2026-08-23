@@ -1,15 +1,20 @@
 package com.example.passman;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.security.SecureRandom;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.util.Duration;
+
+import java.io.IOException;
 
 public class AddPassController {
     @FXML private TextField titleField;
@@ -110,44 +115,36 @@ public class AddPassController {
         }
     }
 
-    private static final SecureRandom RANDOM = new SecureRandom();
-    // Наборы символов
-    private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
-    private static final String DIGITS = "0123456789";
-    private static final String SPECIAL = "!@#$%^&*()_+-=";
-    private static final String ALL = UPPER + LOWER + DIGITS + SPECIAL;
-
     @FXML
-    private void generatePassword() {
-        int length = 16;
-        StringBuilder sb = new StringBuilder(length);
-        sb.append(getRandomChar(UPPER));
-        sb.append(getRandomChar(LOWER));
-        sb.append(getRandomChar(DIGITS));
-        sb.append(getRandomChar(SPECIAL));
+    private void openGenerateWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("generatePassword-view.fxml"));
+            Parent root = loader.load();
 
-        for (int i = 4; i < length; i++) {
-            sb.append(getRandomChar(ALL));
+            GeneratorController generatorController = loader.getController();
+            generatorController.setAddPassController(this);  // ← так
+
+            Stage stage = new Stage();
+            stage.setTitle("Генератор паролей");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setMinWidth(500);
+            stage.setMinHeight(420);
+            stage.sizeToScene();
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        shuffle(sb);
-
-        String generated = sb.toString();
-        passwordField.setText(generated);
-        repeatField.setText(generated);
     }
 
-    private char getRandomChar(String charset) {
-        return charset.charAt(RANDOM.nextInt(charset.length()));
-    }
-
-    private void shuffle(StringBuilder sb) {
-        for (int i = sb.length() - 1; i > 0; i--) {
-            int j = RANDOM.nextInt(i + 1);
-            char temp = sb.charAt(i);
-            sb.setCharAt(i, sb.charAt(j));
-            sb.setCharAt(j, temp);
+    public void setGeneratedPassword(String generatedPassword) {
+        if (generatedPassword != null && !generatedPassword.isEmpty()) {
+            if (passwordField != null) {
+                passwordField.setText(generatedPassword);
+            }
+            if (repeatField != null) {
+                repeatField.setText(generatedPassword);
+            }
         }
     }
 
