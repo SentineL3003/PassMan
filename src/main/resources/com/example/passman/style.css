@@ -1,0 +1,28 @@
+/* Выключенная кнопка (по умолчанию тусклая) */
+.symbol-toggle-btn {
+    -fx-background-color: #3a436b;
+    -fx-text-fill: #697394;
+    -fx-border-color: #2d3349;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-opacity: 0.55;
+    -fx-font-family: "Cascadia Code", monospace;
+    -fx-font-size: 12px;
+}
+
+.symbol-toggle-btn:hover {
+    -fx-opacity: 0.75;
+}
+
+/* Включенная кнопка (яркая и контрастная) */
+.symbol-toggle-btn:selected {
+    -fx-background-color: #4d5782;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-opacity: 1.0;
+}
+
+.symbol-toggle-btn:selected:hover {
+    -fx-background-color: #6b77af;
+}

@@ -34,7 +34,6 @@ public class HelloController {
                     addMasterButton.setDisable(isEmpty);
                 }
             });
-
             masterField.setOnAction(event -> addMaster());
         }
     }
