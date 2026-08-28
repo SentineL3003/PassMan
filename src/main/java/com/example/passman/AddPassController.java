@@ -28,6 +28,10 @@ public class AddPassController {
 
     @FXML private Label label;
 
+
+    @FXML private TextField visibleTextField;
+    private boolean isPasswordVisible = false;
+
     private Timeline strengthAnimation;
     private final DoubleProperty animatedProgress = new SimpleDoubleProperty(0);
 
@@ -145,6 +149,36 @@ public class AddPassController {
             if (repeatField != null) {
                 repeatField.setText(generatedPassword);
             }
+        }
+    }
+
+    @FXML
+    private void toggleVisibility() {
+        isPasswordVisible = !isPasswordVisible;
+
+        if (isPasswordVisible) {
+            // Копирование в TextField
+            visibleTextField.setText(passwordField.getText());
+            visibleTextField.setVisible(true);
+            visibleTextField.setManaged(true);
+
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+
+            visibleTextField.requestFocus();
+            visibleTextField.positionCaret(visibleTextField.getText().length());
+        } else {
+            // Копирование в PasswordField
+            passwordField.setText(visibleTextField.getText());
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+
+            // Скрываем TextField
+            visibleTextField.setVisible(false);
+            visibleTextField.setManaged(false);
+
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
         }
     }
 
