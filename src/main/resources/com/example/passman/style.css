@@ -19,7 +19,6 @@
 .symbol-toggle-btn:selected {
     -fx-background-color: #4d5782;
     -fx-text-fill: #ffffff;
-    -fx-border-color: #7c88be;
     -fx-font-weight: bold;
     -fx-opacity: 1.0;
 }

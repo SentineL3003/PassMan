@@ -20,6 +20,10 @@ public class GeneratorController {
     @FXML private Button closeButton;
     @FXML private ProgressBar qualityBar;
 
+    @FXML private TextField visibleTextField;
+    @FXML private Button toggleEyeButton;
+    private boolean isPasswordVisible = false;
+
     @FXML private Slider lengthSlider;
     @FXML private Spinner<Integer> lengthSpinner;
 
@@ -40,6 +44,22 @@ public class GeneratorController {
 
     @FXML
     public void initialize() {
+        if (passwordField != null && visibleTextField != null) {
+            passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!visibleTextField.getText().equals(newVal)) {
+                    visibleTextField.setText(newVal);
+                }
+                updateQualityBar(newVal);
+            });
+
+            visibleTextField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!passwordField.getText().equals(newVal)) {
+                    passwordField.setText(newVal);
+                }
+                updateQualityBar(newVal);
+            });
+        }
+
         qualityBar.progressProperty().bind(animatedProgress);
 
         passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -94,7 +114,8 @@ public class GeneratorController {
             guaranteedChars.append(getRandomChar(DIGITS));
         }
         if (btnSpecial != null && btnSpecial.isSelected()) {
-            pool.append(SPECIAL).append(getRandomChar(SPECIAL));
+            pool.append(SPECIAL);
+            guaranteedChars.append(getRandomChar(SPECIAL));
         }
 
         // если всё отключено, то строчные вкл
@@ -135,13 +156,49 @@ public class GeneratorController {
     }
 
     @FXML
-    private void toggleVisibility() {}
+    private void toggleVisibility() {
+        isPasswordVisible = !isPasswordVisible;
+
+        if (isPasswordVisible) {
+            // Копирование в TextField
+            visibleTextField.setText(passwordField.getText());
+            visibleTextField.setVisible(true);
+            visibleTextField.setManaged(true);
+
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+
+            visibleTextField.requestFocus();
+            visibleTextField.positionCaret(visibleTextField.getText().length());
+        } else {
+            // Копирование в PasswordField
+            passwordField.setText(visibleTextField.getText());
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+
+            // Скрываем TextField
+            visibleTextField.setVisible(false);
+            visibleTextField.setManaged(false);
+
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
+    }
+
+    private String getPassword() {
+        if (isPasswordVisible && visibleTextField != null) {
+            return visibleTextField.getText();
+        } else if (passwordField != null) {
+            return passwordField.getText();
+        } else {
+            return "";
+        }
+    }
 
     @FXML
     private void usePassword() {
         if (passwordField != null && addPassController != null) {
-            String currentPassword = passwordField.getText();
-            addPassController.setGeneratedPassword(currentPassword);
+            addPassController.setGeneratedPassword(getPassword());
         }
         closeWindow();
     }
@@ -199,7 +256,7 @@ public class GeneratorController {
     @FXML
     private void copyPassword() {
         if (passwordField != null && passwordField.getText() != null) {
-            copyToClipboard(passwordField.getText());
+            copyToClipboard(getPassword());
         }
     }
 
