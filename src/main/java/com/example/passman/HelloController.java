@@ -50,6 +50,12 @@ public class HelloController {
 
         MasterPasswordManager.saveMaster(master);
 
+        try {
+            CryptoPass.initKey(master);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         openMainWindow();
     }
 

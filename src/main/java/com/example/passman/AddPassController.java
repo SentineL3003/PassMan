@@ -62,6 +62,7 @@ public class AddPassController {
         if (title.isEmpty()) {
             showError("Пожалуйста, введите название сервиса / сайта!");
             titleField.requestFocus();
+            return;
         }
 
         if (login.isEmpty()) {
