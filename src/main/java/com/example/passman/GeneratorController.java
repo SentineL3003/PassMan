@@ -16,12 +16,10 @@ import java.security.SecureRandom;
 
 public class GeneratorController {
     @FXML private PasswordField passwordField;
-    @FXML private Button useButton;
     @FXML private Button closeButton;
     @FXML private ProgressBar qualityBar;
 
     @FXML private TextField visibleTextField;
-    @FXML private Button toggleEyeButton;
     private boolean isPasswordVisible = false;
 
     @FXML private Slider lengthSlider;
@@ -259,6 +257,7 @@ public class GeneratorController {
             copyToClipboard(getPassword());
         }
     }
+
 
     @FXML
     private void closeWindow() {
