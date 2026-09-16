@@ -20,10 +20,15 @@ public class HelloController {
     private PasswordField masterField;
 
     @FXML
+    private PasswordField repeatMasterField;
+
+    @FXML
     private Button exitButton;
 
     @FXML
     private Button addMasterButton;
+
+    @FXML private Label messageLabel;
 
     @FXML
     public void initialize() {
@@ -38,10 +43,19 @@ public class HelloController {
         }
     }
 
-
     @FXML
     protected void addMaster() {
+        String password = masterField.getText().trim();
+        String repeat = repeatMasterField.getText().trim();
+
         if (masterField == null) return;
+
+        // проверка совпадения
+        if (!password.equals(repeat)) {
+            messageLabel.setText("Мастер-пароли не совпадают");
+            repeatMasterField.requestFocus();
+            return;
+        }
 
         String master = masterField.getText();
         if (master == null || master.trim().isEmpty()) {

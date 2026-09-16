@@ -16,12 +16,12 @@
         </Label>
 
         <!-- Контейнер формы -->
-        <VBox alignment="CENTER" maxWidth="Infinity" spacing="15.0" VBox.vgrow="NEVER">
+        <VBox alignment="CENTER" maxWidth="Infinity" prefWidth="500.0" spacing="15.0" VBox.vgrow="NEVER">
             <VBox.margin>
                 <Insets top="60.0" />
             </VBox.margin>
             <children>
-                <Label text="Добро пожаловать в PassMan!" textFill="WHITE">
+                <Label prefWidth="443.0" text="Добро пожаловать в PassMan!" textFill="WHITE">
                     <font>
                         <Font name="Cascadia Code Regular" size="28.0" />
                     </font>
@@ -38,6 +38,24 @@
                         <Font name="Cascadia Code Regular" size="14.0" />
                     </font>
                 </PasswordField>
+
+                <Label text="Повторите мастер-пароль" textFill="WHITE">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </Label>
+
+                <PasswordField fx:id="repeatMasterField" maxWidth="300.0" prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: #4d5782; -fx-text-fill: #ffffff;">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </PasswordField>
+
+                <Label fx:id="messageLabel" alignment="CENTER" maxWidth="Infinity" prefHeight="21.0" textFill="#ee3e3e">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="14.0" />
+                    </font>
+                </Label>
 
                 <Button fx:id="addMasterButton" disable="true" mnemonicParsing="false" onAction="#addMaster" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: #4d5782; -fx-cursor: hand;" text="Принять" textFill="WHITE">
                     <font>
