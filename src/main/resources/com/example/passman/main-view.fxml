@@ -53,6 +53,17 @@
             </VBox.margin>
         </TableView>
 
+        <Button fx:id="togglePasswordsButton" mnemonicParsing="false" onAction="#togglePasswordsVisibility"
+                prefHeight="25.0" style="-fx-background-color: #4d5782; -fx-cursor: hand;"
+                text="👁 Показать пароли" textFill="WHITE">
+            <font>
+                <Font name="Cascadia Code Regular" size="12.0" />
+            </font>
+            <VBox.margin>
+                <Insets top="15.0" />
+            </VBox.margin>
+        </Button>
+
         <!-- Быстрые действия -->
         <HBox alignment="CENTER" maxWidth="Infinity" spacing="12.0">
             <children>

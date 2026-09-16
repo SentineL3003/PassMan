@@ -26,6 +26,10 @@ public class MainController {
     @FXML private TableColumn<Password, String> colPass;
     @FXML private TableColumn<Password, String> colURL;
 
+    @FXML private Button togglePasswordsButton;
+    private boolean passwordsVisible  = false;
+    private static final String MASK = "••••••••";
+
     @FXML private TextField searchField;
 
     private final ObservableList<Password> passwordList = FXCollections.observableArrayList();
@@ -35,6 +39,17 @@ public class MainController {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
         colPass.setCellValueFactory(new PropertyValueFactory<>("password"));
+        colPass.setCellFactory(col -> new TableCell<Password, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(passwordsVisible ? item : MASK);
+                }
+            }
+        });
         colURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 
         List<Password> savedPasswords = PasswordStorageManager.loadPasswords();
@@ -104,6 +119,15 @@ public class MainController {
         if (password != null) {
             passwordList.add(password); // Таблица обновится автоматически
         }
+    }
+
+    @FXML
+    protected void togglePasswordsVisibility() {
+        passwordsVisible = !passwordsVisible;
+        if (togglePasswordsButton != null) {
+            togglePasswordsButton.setText(passwordsVisible ? "👁 Скрыть пароли" : "👁 Показать пароли");
+        }
+        passwordTable.refresh();
     }
 
     @FXML
