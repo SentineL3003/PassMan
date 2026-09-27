@@ -37,32 +37,80 @@
             </padding>
         </HBox>
 
-        <!-- Основная таблица паролей -->
-        <TableView fx:id="passwordTable" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: #313b63;" VBox.vgrow="ALWAYS">
-            <columns>
-                <TableColumn fx:id="colTitle" prefWidth="200.0" text="Сервис / Сайт" />
-                <TableColumn fx:id="colLogin" prefWidth="200.0" text="Логин" />
-                <TableColumn fx:id="colPass" prefWidth="200.0" text="Пароль" />
-                <TableColumn fx:id="colURL" prefWidth="150.0" text="URL" />
-            </columns>
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-            </columnResizePolicy>
-            <VBox.margin>
-                <Insets left="15.0" right="15.0" top="10.0" />
-            </VBox.margin>
-        </TableView>
+        <!-- Таблица + панель деталей -->
+        <SplitPane fx:id="mainSplitPane" dividerPositions="0.55" orientation="VERTICAL" style="-fx-background-color: #313b63;" VBox.vgrow="ALWAYS">
+            <items>
+                <TableView fx:id="passwordTable" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: #313b63;">
+                    <columns>
+                        <TableColumn fx:id="colTitle" prefWidth="200.0" text="Сервис / Сайт" />
+                        <TableColumn fx:id="colLogin" prefWidth="200.0" text="Логин" />
+                        <TableColumn fx:id="colPass" prefWidth="200.0" text="Пароль" />
+                        <TableColumn fx:id="colURL" prefWidth="150.0" text="URL" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
 
-        <Button fx:id="togglePasswordsButton" mnemonicParsing="false" onAction="#togglePasswordsVisibility"
-                prefHeight="25.0" style="-fx-background-color: #4d5782; -fx-cursor: hand;"
-                text="👁 Показать пароли" textFill="WHITE">
-            <font>
-                <Font name="Cascadia Code Regular" size="12.0" />
-            </font>
-            <VBox.margin>
-                <Insets top="15.0" />
-            </VBox.margin>
-        </Button>
+                <!-- Панель подробной информации о записи (как в KeePassXC) -->
+                <VBox fx:id="detailPanel" spacing="14.0" style="-fx-background-color: #2E3348;">
+                    <padding>
+                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label style="-fx-font-size: 20px;" text="🔑" />
+                                <Label fx:id="detailTitleLabel" text="Выберите запись для просмотра" textFill="WHITE">
+                                    <font>
+                                        <Font name="Cascadia Code Regular" size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <Separator />
+
+                        <GridPane hgap="15.0" vgap="12.0">
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="100.0" prefWidth="110.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+
+                            <children>
+                                <Label text="Логин:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
+                                </Label>
+                                <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    <children>
+                                        <Label fx:id="detailLoginLabel" style="-fx-font-family: 'Cascadia Code';" textFill="WHITE" />
+                                    </children>
+                                </HBox>
+
+                                <Label text="Пароль:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
+                                </Label>
+                                <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <children>
+                                        <Label fx:id="detailPasswordLabel" style="-fx-font-family: 'Cascadia Code';" textFill="WHITE" />
+                                        <Button fx:id="togglePasswordButton" mnemonicParsing="false" onAction="#togglePasswordVisibility" style="-fx-background-color: #4d5782; -fx-background-radius: 4; -fx-cursor: hand;" text="👁" textFill="WHITE" />
+                                    </children>
+                                </HBox>
+
+                                <Label text="URL-адрес:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
+                                </Label>
+                                <Hyperlink fx:id="detailUrlLink" onAction="#openDetailUrl" style="-fx-text-fill: #8ab4f8;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
+                                </Hyperlink>
+                            </children>
+                        </GridPane>
+
+                        <Region VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
 
         <!-- Быстрые действия -->
         <HBox alignment="CENTER" maxWidth="Infinity" spacing="12.0">
@@ -80,6 +128,12 @@
                 </Button>
 
                 <Button mnemonicParsing="false" onAction="#copyPass" style="-fx-background-color: #4d5782; -fx-cursor: hand;" text="Копировать пароль" textFill="WHITE">
+                    <font>
+                        <Font name="Cascadia Code Regular" size="12.0" />
+                    </font>
+                </Button>
+
+                <Button mnemonicParsing="false" onAction="#copyURL" style="-fx-background-color: #4d5782; -fx-cursor: hand;" text="Копировать URL" textFill="WHITE">
                     <font>
                         <Font name="Cascadia Code Regular" size="12.0" />
                     </font>

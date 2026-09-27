@@ -26,9 +26,16 @@ public class MainController {
     @FXML private TableColumn<Password, String> colPass;
     @FXML private TableColumn<Password, String> colURL;
 
-    @FXML private Button togglePasswordsButton;
-    private boolean passwordsVisible  = false;
-    private static final String MASK = "••••••••";
+    // Панель деталей
+    @FXML private Label detailTitleLabel;
+    @FXML private Label detailLoginLabel;
+    @FXML private Label detailPasswordLabel;
+    @FXML private Button togglePasswordButton;
+    @FXML private Hyperlink detailUrlLink;
+
+
+    private Password selectedForDetail;
+    private boolean isPasswordsVisible  = false;
 
     @FXML private TextField searchField;
 
@@ -39,17 +46,6 @@ public class MainController {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
         colPass.setCellValueFactory(new PropertyValueFactory<>("password"));
-        colPass.setCellFactory(col -> new TableCell<Password, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(passwordsVisible ? item : MASK);
-                }
-            }
-        });
         colURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 
         List<Password> savedPasswords = PasswordStorageManager.loadPasswords();
@@ -88,6 +84,56 @@ public class MainController {
         });
 
         passwordTable.setItems(filteredData);
+
+        // Обновляем панель деталей при выборе строки в таблице
+        passwordTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            isPasswordsVisible = false;
+            showDetails(newVal);
+        });
+
+        showDetails(null); // изначально пусто
+    }
+
+    // ===== Панель деталей записи =====
+
+    private void showDetails(Password password) {
+        selectedForDetail = password;
+
+        if (password == null) {
+            detailTitleLabel.setText("Выберите запись для просмотра");
+            detailLoginLabel.setText("");
+            detailPasswordLabel.setText("");
+            togglePasswordButton.setText("👁");
+            detailUrlLink.setText("");
+            return;
+        }
+
+        detailTitleLabel.setText(password.getTitle());
+        detailLoginLabel.setText(password.getLogin());
+        detailPasswordLabel.setText(maskPassword(password.getPassword()));
+        togglePasswordButton.setText("👁");
+        detailUrlLink.setText(password.getUrl());
+    }
+
+    private String maskPassword(String pass) {
+        if (pass == null || pass.isEmpty()) return "";
+        return "•".repeat(Math.max(pass.length(), 6));
+    }
+
+    @FXML
+    protected void togglePasswordVisibility() {
+        if (selectedForDetail == null) return;
+
+        isPasswordsVisible = !isPasswordsVisible;
+        if (isPasswordsVisible) {
+            detailPasswordLabel.setText(selectedForDetail.getPassword());
+        } else {
+            detailPasswordLabel.setText(maskPassword(selectedForDetail.getPassword()));
+        }
+    }
+
+    @FXML
+    protected void openDetailUrl() {
     }
 
     @FXML
@@ -122,19 +168,18 @@ public class MainController {
     }
 
     @FXML
-    protected void togglePasswordsVisibility() {
-        passwordsVisible = !passwordsVisible;
-        if (togglePasswordsButton != null) {
-            togglePasswordsButton.setText(passwordsVisible ? "👁 Скрыть пароли" : "👁 Показать пароли");
-        }
-        passwordTable.refresh();
-    }
-
-    @FXML
     protected void copyLogin() {
         Password selected = passwordTable.getSelectionModel().getSelectedItem();
         if (selected != null && selected.getLogin() != null) {
             copyToClipboard(selected.getLogin());
+        }
+    }
+
+    @FXML
+    protected void copyURL() {
+        Password selected = passwordTable.getSelectionModel().getSelectedItem();
+        if (selected != null && selected.getLogin() != null) {
+            copyToClipboard(selected.getUrl());
         }
     }
 
@@ -176,6 +221,7 @@ public class MainController {
             stage.showAndWait();
             passwordTable.refresh();
             PasswordStorageManager.savePasswords(passwordList);
+            showDetails(selected);
         } catch (IOException e) {
             e.printStackTrace();
         }
