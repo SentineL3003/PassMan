@@ -10,6 +10,7 @@ module com.example.passman {
     requires com.google.gson;
     requires jbcrypt;
     requires javafx.base;
+    requires java.desktop;
 
     opens com.example.passman to javafx.fxml, com.google.gson;
     exports com.example.passman;

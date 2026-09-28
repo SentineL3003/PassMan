@@ -16,6 +16,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 public class MainController {
@@ -39,6 +40,11 @@ public class MainController {
 
     @FXML private TextField searchField;
 
+    private static final double ROW_HEIGHT = 28.0;
+    private static final double HEADER_HEIGHT = 28.0;
+    private static final int MIN_VISIBLE_ROWS = 1;
+    private static final int MAX_VISIBLE_ROWS = 8;
+
     private final ObservableList<Password> passwordList = FXCollections.observableArrayList();
 
     @FXML
@@ -46,6 +52,18 @@ public class MainController {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
         colPass.setCellValueFactory(new PropertyValueFactory<>("password"));
+        colPass.setCellValueFactory(new PropertyValueFactory<>("password"));
+        colPass.setCellFactory(column -> new TableCell<Password, String>() {
+            @Override
+            protected void updateItem(String password, boolean empty) {
+                super.updateItem(password, empty);
+                if (empty || password == null || password.isEmpty()) {
+                    setText(null);
+                } else {
+                    setText("•".repeat(10));
+                }
+            }
+        });
         colURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 
         List<Password> savedPasswords = PasswordStorageManager.loadPasswords();
@@ -85,6 +103,13 @@ public class MainController {
 
         passwordTable.setItems(filteredData);
 
+        // Пересчитываем высоту при любом изменении отфильтрованного списка (добавление/удаление записей)
+        filteredData.addListener((javafx.collections.ListChangeListener<Password>) change -> {
+            updateTableHeight(filteredData.size());
+        });
+
+        updateTableHeight(filteredData.size()); // начальный расчёт
+
         // Обновляем панель деталей при выборе строки в таблице
         passwordTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             isPasswordsVisible = false;
@@ -117,7 +142,7 @@ public class MainController {
 
     private String maskPassword(String pass) {
         if (pass == null || pass.isEmpty()) return "";
-        return "•".repeat(Math.max(pass.length(), 6));
+        return "•".repeat(10);
     }
 
     @FXML
@@ -134,6 +159,18 @@ public class MainController {
 
     @FXML
     protected void openDetailUrl() {
+        if (selectedForDetail == null || selectedForDetail.getUrl() == null || selectedForDetail.getUrl().isBlank()) {
+            return;
+        }
+        try {
+            String url = selectedForDetail.getUrl();
+            if (!url.matches("^[a-zA-Z][a-zA-Z0-9+.-]*://.*")) {
+                url = "https://" + url;
+            }
+            java.awt.Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -225,6 +262,15 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateTableHeight(int rowCount) {
+        int visibleRows = Math.max(MIN_VISIBLE_ROWS, Math.min(rowCount, MAX_VISIBLE_ROWS));
+        double newHeight = HEADER_HEIGHT + (visibleRows * ROW_HEIGHT) + 2; // +2 на границы
+
+        passwordTable.setPrefHeight(newHeight);
+        passwordTable.setMinHeight(newHeight);
+        passwordTable.setMaxHeight(newHeight);
     }
 
     private void copyToClipboard(String text) {

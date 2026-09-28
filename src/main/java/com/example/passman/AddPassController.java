@@ -45,9 +45,23 @@ public class AddPassController {
     public void initialize() {
         qualityBar.progressProperty().bind(animatedProgress);
 
-        passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
-            updateQualityBar(newVal);
-        });
+        if (passwordField != null && visibleTextField != null) {
+            passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!visibleTextField.getText().equals(newVal)) {
+                    visibleTextField.setText(newVal);
+                }
+                updateQualityBar(newVal);
+            });
+
+            visibleTextField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!passwordField.getText().equals(newVal)) {
+                    passwordField.setText(newVal);
+                }
+                updateQualityBar(newVal);
+            });
+        } else {
+            passwordField.textProperty().addListener((obs, oldVal, newVal) -> updateQualityBar(newVal));
+        }
     }
 
     @FXML
@@ -144,8 +158,18 @@ public class AddPassController {
 
     public void setGeneratedPassword(String generatedPassword) {
         if (generatedPassword != null && !generatedPassword.isEmpty()) {
+            // Принудительно возвращаем в замаскированный режим
+            isPasswordVisible = false;
+
             if (passwordField != null) {
                 passwordField.setText(generatedPassword);
+                passwordField.setVisible(true);
+                passwordField.setManaged(true);
+            }
+            if (visibleTextField != null) {
+                visibleTextField.setText(generatedPassword);
+                visibleTextField.setVisible(false);
+                visibleTextField.setManaged(false);
             }
             if (repeatField != null) {
                 repeatField.setText(generatedPassword);
@@ -158,28 +182,19 @@ public class AddPassController {
         isPasswordVisible = !isPasswordVisible;
 
         if (isPasswordVisible) {
-            // Копирование в TextField
             visibleTextField.setText(passwordField.getText());
             visibleTextField.setVisible(true);
             visibleTextField.setManaged(true);
 
             passwordField.setVisible(false);
             passwordField.setManaged(false);
-
-            visibleTextField.requestFocus();
-            visibleTextField.positionCaret(visibleTextField.getText().length());
         } else {
-            // Копирование в PasswordField
             passwordField.setText(visibleTextField.getText());
             passwordField.setVisible(true);
             passwordField.setManaged(true);
 
-            // Скрываем TextField
             visibleTextField.setVisible(false);
             visibleTextField.setManaged(false);
-
-            passwordField.requestFocus();
-            passwordField.positionCaret(passwordField.getText().length());
         }
     }
 

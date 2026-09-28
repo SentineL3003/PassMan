@@ -5,13 +5,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="Infinity" minHeight="500.0" minWidth="800.0" prefHeight="650.0" prefWidth="800.0" style="-fx-background-color: #313b63;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.passman.MainController">
+<VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="Infinity" minHeight="500.0" minWidth="800.0" prefHeight="650.0" prefWidth="800.0" style="-fx-background-color: #313b63;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.passman.MainController">
 
     <children>
         <!-- Заголовок -->
         <Label alignment="CENTER" maxWidth="Infinity" prefHeight="85.0" style="-fx-background-color: #2E3348;" text="PassMan — Мои пароли" textFill="WHITE">
             <font>
-                <Font name="Cascadia Mono Regular" size="36.0" />
+                <Font name="Cascadia Mono Regular" size="30.0" />
             </font>
         </Label>
 
@@ -37,80 +37,84 @@
             </padding>
         </HBox>
 
-        <!-- Таблица + панель деталей -->
-        <SplitPane fx:id="mainSplitPane" dividerPositions="0.55" orientation="VERTICAL" style="-fx-background-color: #313b63;" VBox.vgrow="ALWAYS">
-            <items>
-                <TableView fx:id="passwordTable" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: #313b63;">
-                    <columns>
-                        <TableColumn fx:id="colTitle" prefWidth="200.0" text="Сервис / Сайт" />
-                        <TableColumn fx:id="colLogin" prefWidth="200.0" text="Логин" />
-                        <TableColumn fx:id="colPass" prefWidth="200.0" text="Пароль" />
-                        <TableColumn fx:id="colURL" prefWidth="150.0" text="URL" />
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                    </columnResizePolicy>
-                </TableView>
+        <!-- Основная таблица паролей -->
+        <TableView fx:id="passwordTable" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: #313b63;">
+            <columns>
+                <TableColumn fx:id="colTitle" prefWidth="200.0" text="Сервис / Сайт" />
+                <TableColumn fx:id="colLogin" prefWidth="200.0" text="Логин" />
+                <TableColumn fx:id="colPass" prefWidth="200.0" text="Пароль" />
+                <TableColumn fx:id="colURL" prefWidth="150.0" text="URL" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+            <VBox.margin>
+                <Insets left="15.0" right="15.0" top="10.0" />
+            </VBox.margin>
+        </TableView>
 
-                <!-- Панель подробной информации о записи (как в KeePassXC) -->
-                <VBox fx:id="detailPanel" spacing="14.0" style="-fx-background-color: #2E3348;">
-                    <padding>
-                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
-                    </padding>
+        <!-- Растягивающийся промежуток — прижимает кнопки/подвал вниз -->
+        <Region VBox.vgrow="ALWAYS" />
+
+        <!-- Панель подробной информации о записи -->
+        <VBox fx:id="detailPanel" maxWidth="Infinity" minHeight="160.0" prefHeight="150.0" spacing="10.0" style="-fx-background-color: #2E3348;" VBox.vgrow="NEVER">
+            <padding>
+                <Insets bottom="12.0" left="20.0" right="20.0" top="12.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label fx:id="detailTitleLabel" text="Выберите запись для просмотра" textFill="WHITE">
+                            <font>
+                                <Font name="Cascadia Code Regular" size="18.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+
+                <Separator />
+
+                <GridPane hgap="15.0" vgap="8.0">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="100.0" prefWidth="110.0" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+
+                    <children>
+                        <Label text="Логин:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <font><Font name="Cascadia Code Regular" size="14.0" /></font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                             <children>
-                                <Label style="-fx-font-size: 20px;" text="🔑" />
-                                <Label fx:id="detailTitleLabel" text="Выберите запись для просмотра" textFill="WHITE">
-                                    <font>
-                                        <Font name="Cascadia Code Regular" size="20.0" />
-                                    </font>
-                                </Label>
+                                <Label fx:id="detailLoginLabel" style="-fx-font-family: 'Cascadia Code'; -fx-font-size: 14px;" textFill="WHITE" />
                             </children>
                         </HBox>
 
-                        <Separator />
-
-                        <GridPane hgap="15.0" vgap="12.0">
-                            <columnConstraints>
-                                <ColumnConstraints halignment="RIGHT" minWidth="100.0" prefWidth="110.0" />
-                                <ColumnConstraints hgrow="ALWAYS" />
-                            </columnConstraints>
-
+                        <Label text="Пароль:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <font><Font name="Cascadia Code Regular" size="14.0" /></font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <children>
-                                <Label text="Логин:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
-                                </Label>
-                                <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                    <children>
-                                        <Label fx:id="detailLoginLabel" style="-fx-font-family: 'Cascadia Code';" textFill="WHITE" />
-                                    </children>
-                                </HBox>
-
-                                <Label text="Пароль:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
-                                </Label>
-                                <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                    <children>
-                                        <Label fx:id="detailPasswordLabel" style="-fx-font-family: 'Cascadia Code';" textFill="WHITE" />
-                                        <Button fx:id="togglePasswordButton" mnemonicParsing="false" onAction="#togglePasswordVisibility" style="-fx-background-color: #4d5782; -fx-background-radius: 4; -fx-cursor: hand;" text="👁" textFill="WHITE" />
-                                    </children>
-                                </HBox>
-
-                                <Label text="URL-адрес:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
-                                </Label>
-                                <Hyperlink fx:id="detailUrlLink" onAction="#openDetailUrl" style="-fx-text-fill: #8ab4f8;" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                    <font><Font name="Cascadia Code Regular" size="13.0" /></font>
-                                </Hyperlink>
+                                <Label fx:id="detailPasswordLabel" style="-fx-font-family: 'Cascadia Code'; -fx-font-size: 14px;" textFill="WHITE" />
+                                <Button fx:id="togglePasswordButton" mnemonicParsing="false" onAction="#togglePasswordVisibility" style="-fx-background-color: #4d5782; -fx-background-radius: 4; -fx-cursor: hand;" text="👁" textFill="WHITE" />
                             </children>
-                        </GridPane>
+                        </HBox>
 
-                        <Region VBox.vgrow="ALWAYS" />
+                        <Label text="URL-адрес:" textFill="#b0b8d0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <font><Font name="Cascadia Code Regular" size="14.0" /></font>
+                        </Label>
+                        <Hyperlink fx:id="detailUrlLink" onAction="#openDetailUrl" style="-fx-text-fill: #8ab4f8; -fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <font><Font name="Cascadia Code Regular" size="14.0" /></font>
+                        </Hyperlink>
                     </children>
-                </VBox>
-            </items>
-        </SplitPane>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+            </children>
+        </VBox>
 
         <!-- Быстрые действия -->
         <HBox alignment="CENTER" maxWidth="Infinity" spacing="12.0">
@@ -151,7 +155,7 @@
         </HBox>
 
         <!-- Подвал -->
-        <HBox alignment="BOTTOM_LEFT" maxWidth="Infinity" prefHeight="50.0">
+        <HBox alignment="BOTTOM_LEFT" maxWidth="Infinity" prefHeight="50.0" prefWidth="800.0">
             <children>
                 <Button fx:id="exitButton" cancelButton="true" mnemonicParsing="false" onAction="#exit" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #4d5782; -fx-cursor: hand;" text="Выход" textFill="WHITE">
                     <font>
